@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import Logo from "./logo";
 
 const LoginForm = () => {
+  return null; // This component is currently not implemented, returning null to avoid rendering issues.
   return (
     <React.Fragment>
       <div className="absolute inset-0 bg-black/20 backdrop-blur-xs z-15" />
