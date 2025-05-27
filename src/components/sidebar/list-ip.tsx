@@ -15,6 +15,12 @@ import { Badge } from "../ui/badge";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ScrollArea } from "../ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface Asset {
   id: number;
@@ -187,13 +193,22 @@ const ListIp = () => {
                           </div>
                         </div>
                         {!asset.isIpAsset && (
-                          <Button
-                            className="h-6 w-6 p-0"
-                            size="icon"
-                            variant="outline"
-                          >
-                            <PlusIcon className="h-3 w-3" />
-                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Button
+                                  className="h-6 w-6 p-0"
+                                  size="icon"
+                                  variant="outline"
+                                >
+                                  <PlusIcon className="h-3 w-3" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Register as IP Asset</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         )}
                       </div>
                     </SidebarMenuButton>

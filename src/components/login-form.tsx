@@ -1,5 +1,5 @@
 import { Wallet } from "lucide-react";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { ShineBorder } from "./magicui/shine-border";
 import {
   Card,
@@ -10,9 +10,30 @@ import {
 } from "./ui/card";
 import { Button } from "./ui/button";
 import Logo from "./logo";
+import { useConnectModal } from "@tomo-inc/tomo-evm-kit";
+import { useAccount, useSwitchChain } from "wagmi";
+import { supportedChainIds } from "@/config";
 
 const LoginForm = () => {
-  return null; // This component is currently not implemented, returning null to avoid rendering issues.
+  const { openConnectModal } = useConnectModal();
+  const { isConnected, chainId } = useAccount();
+  const { switchChain } = useSwitchChain();
+
+  useEffect(() => {
+    if (!isConnected || !chainId) return;
+
+    if (!supportedChainIds.includes(chainId)) {
+      switchChain({ chainId: supportedChainIds[0] });
+    }
+  }, [isConnected, chainId, switchChain]);
+
+  const isRightConnected = useMemo(
+    () => isConnected && supportedChainIds.includes(chainId || 0),
+    [isConnected, chainId]
+  );
+
+  if (isRightConnected) return null;
+
   return (
     <React.Fragment>
       <div className="absolute inset-0 bg-black/20 backdrop-blur-xs z-15" />
@@ -32,7 +53,10 @@ const LoginForm = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Button className="w-full h-12 text-lg font-medium">
+            <Button
+              className="w-full h-12 text-lg font-medium"
+              onClick={openConnectModal}
+            >
               <Wallet className="mr-2 h-5 w-5" />
               Connect Wallet
             </Button>
