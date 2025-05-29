@@ -7,16 +7,11 @@ import {
   SidebarGroupContent,
 } from "../ui/sidebar";
 import { Skeleton } from "../ui/skeleton";
-import { useState } from "react";
 import { toast } from "sonner";
 import Avatar from "boring-avatars";
-
-const walletData = {
-  address: "0x742d35Cc6634C0532925a3b8D4C9db96590b5b8e",
-  balance: "2.45",
-  avatar:
-    "https://source.boringavatars.com/marble/120/0x742d35Cc6634C0532925a3b8D4C9db96590b5b8e",
-};
+import { useAccount, useBalance } from "wagmi";
+import { useMemo } from "react";
+import { formatEther } from "viem";
 
 const WalletSkeleton = () => (
   <Card>
@@ -33,7 +28,15 @@ const WalletSkeleton = () => (
 );
 
 const WalletInfo = () => {
-  const [walletLoading] = useState(false);
+  const { address } = useAccount();
+  const { data, isLoading: walletLoading } = useBalance({ address });
+
+  const walletData = useMemo(() => {
+    return {
+      address: address || "-",
+      balance: data?.value ? formatEther(data?.value || 0n, "wei") : "-",
+    };
+  }, [address, data]);
 
   const copyAddress = () => {
     navigator.clipboard.writeText(walletData.address);
@@ -63,7 +66,7 @@ const WalletInfo = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-mono">
-                    {truncateAddress(walletData.address)}
+                    {truncateAddress(walletData.address || "")}
                   </span>
                   <Button
                     variant="ghost"
@@ -75,7 +78,7 @@ const WalletInfo = () => {
                   </Button>
                 </div>
                 <div className="text-lg font-semibold">
-                  {walletData.balance} ETH
+                  {walletData.balance} IP
                 </div>
               </div>
             </div>

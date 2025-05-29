@@ -3,6 +3,12 @@ import { storyAeneid } from "wagmi/chains";
 
 const tomoClientId = import.meta.env.VITE_TOMO_CLIENT_ID;
 const walletConnectProjectID = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID;
+const basePublicUrl =
+  import.meta.env.VITE_BASE_PUBLIC_URL || "http://localhost:3001";
+const baseBlockscoutApiUrl = import.meta.env.VITE_BASE_BLOCKSCOUT_API_URL!;
+const baseAeneidApiUrl = import.meta.env.VITE_BASE_AENID_API_URL!;
+const baseAeneidApiKey = import.meta.env.VITE_BASE_AENID_API_KEY!;
+
 const supportedChainIds: number[] = [storyAeneid.id];
 
 const wagmiConfig = getDefaultConfig({
@@ -13,4 +19,12 @@ const wagmiConfig = getDefaultConfig({
   ssr: false,
 });
 
-export { wagmiConfig, tomoClientId, supportedChainIds };
+export {
+  wagmiConfig,
+  tomoClientId,
+  supportedChainIds,
+  baseAeneidApiUrl,
+  baseBlockscoutApiUrl,
+  basePublicUrl,
+  baseAeneidApiKey,
+};

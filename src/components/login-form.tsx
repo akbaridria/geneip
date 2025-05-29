@@ -41,7 +41,7 @@ const LoginForm = () => {
         <Card className="relative overflow-hidden w-full max-w-md mx-4 pointer-events-auto">
           <ShineBorder
             shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-            borderWidth={2}
+            borderWidth={1}
           />
           <CardHeader className="space-y-1 text-center">
             <Logo />

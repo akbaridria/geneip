@@ -24,6 +24,7 @@
     "boring-avatars": "^1.11.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "lucide-react": "^0.511.0",
     "motion": "^12.14.0",
     "next-themes": "^0.4.6",
@@ -32,6 +33,7 @@
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
+    "usehooks-ts": "^3.1.1",
     "viem": "2.x",
     "wagmi": "^2.15.4"
   },

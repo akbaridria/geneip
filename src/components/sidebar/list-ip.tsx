@@ -166,7 +166,7 @@ const ListIp = () => {
                               </Badge>
                             ) : (
                               <Badge
-                                variant="outline"
+                                variant="secondary"
                                 className="h-5 w-5 p-0 rounded-full"
                               >
                                 <ImageIcon className="h-2.5 w-2.5" />

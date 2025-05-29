@@ -19,6 +19,7 @@ import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "./config";
 
 import "@xyflow/react/dist/style.css";
+import { CommandSearch } from "./components/command-search";
 
 const App = () => {
   const [nodes, , onNodesChange] = useNodesState([]);
@@ -39,6 +40,7 @@ const App = () => {
                 <div className="flex w-screen h-screen">
                   <AppSidebar />
                   <SidebarInset className="flex-1">
+                    <CommandSearch />
                     <ReactFlow
                       nodes={nodes}
                       edges={edges}

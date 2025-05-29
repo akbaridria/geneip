@@ -19,7 +19,7 @@ import ListBids from "./list-bids";
 
 const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar collapsible="none" className="w-80" {...props}>
+    <Sidebar collapsible="none" className="w-[375px]" {...props}>
       <SidebarHeader className="p-4">
         <Logo />
       </SidebarHeader>
