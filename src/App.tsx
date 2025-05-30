@@ -1,12 +1,5 @@
 "use client";
 
-import {
-  Background,
-  BackgroundVariant,
-  ReactFlow,
-  useEdgesState,
-  useNodesState,
-} from "@xyflow/react";
 import LoginForm from "./components/login-form";
 import DesktopRequired from "./components/desktop-required";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -17,14 +10,12 @@ import { TomoEVMKitProvider } from "@tomo-inc/tomo-evm-kit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "./config";
+import { CommandSearch } from "./components/command-search";
+import { IpGraph } from "./components/ip-graph";
 
 import "@xyflow/react/dist/style.css";
-import { CommandSearch } from "./components/command-search";
 
 const App = () => {
-  const [nodes, , onNodesChange] = useNodesState([]);
-  const [edges] = useEdgesState([]);
-
   const queryClient = new QueryClient();
 
   return (
@@ -41,7 +32,8 @@ const App = () => {
                   <AppSidebar />
                   <SidebarInset className="flex-1">
                     <CommandSearch />
-                    <ReactFlow
+                    <IpGraph />
+                    {/* <ReactFlow
                       nodes={nodes}
                       edges={edges}
                       onNodesChange={onNodesChange}
@@ -50,7 +42,7 @@ const App = () => {
                       colorMode="dark"
                     >
                       <Background variant={BackgroundVariant.Dots} />
-                    </ReactFlow>
+                    </ReactFlow> */}
                   </SidebarInset>
                 </div>
               </SidebarProvider>

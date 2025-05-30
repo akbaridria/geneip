@@ -14,3 +14,17 @@ export interface IpAsset {
   is_tracked: boolean;
   metadata: Metadata;
 }
+
+export interface Track {
+  parent_id: string;
+  child_id: string;
+  depth: number;
+  child_metadata?: Metadata;
+  parent_metadata?: Metadata;
+}
+
+export interface IpAssetNodeData {
+  asset_id: string;
+  metadata?: Metadata;
+  [key: string]: unknown;
+}

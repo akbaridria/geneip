@@ -8,6 +8,6 @@ const fetchSearchIpAsset = (ip: string) =>
 const fetchTrackById = (id: string) =>
   apiClient("local")
     .get(`/track/${id}`)
-    .then((res) => res.data);
+    .then((res) => res.data.results);
 
 export { fetchSearchIpAsset, fetchTrackById };

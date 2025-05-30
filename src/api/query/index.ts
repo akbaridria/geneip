@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchSearchIpAsset, fetchTrackById } from "@/api/endpoints";
-import type { IpAsset } from "@/types";
+import type { IpAsset, Track } from "@/types";
 import { queryKeys } from "../constant/query-keys";
 
 export const useSearchIpAsset = () =>
@@ -9,7 +9,7 @@ export const useSearchIpAsset = () =>
   });
 
 export const useTrackById = (id: string, enabled = !!id) =>
-  useQuery({
+  useQuery<Track[], Error>({
     queryKey: queryKeys.trackById(id),
     queryFn: () => fetchTrackById(id),
     enabled,

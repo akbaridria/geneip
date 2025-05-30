@@ -15,6 +15,7 @@ import {
 import { useSearchIpAsset } from "@/api/query";
 import type { IpAsset as IpAssetType } from "@/types";
 import { ImageWithFallback } from "./image-with-fallback";
+import { useIpGraphStore } from "@/store";
 
 export function CommandSearch() {
   const [open, setOpen] = useState(false);
@@ -60,11 +61,14 @@ export function CommandSearch() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const { setSelectedAssetId, setLoading } = useIpGraphStore();
+
   const handleSelectAsset = (asset: IpAssetType) => {
-    // Handle asset selection here
-    console.log(`Selected Asset:`, asset);
+    setLoading(true);
+    setSelectedAssetId(asset.asset_id);
     setOpen(false);
     setSearchQuery("");
+    setLoading(false);
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -73,14 +77,6 @@ export function CommandSearch() {
       setSearchQuery("");
       setSearchResults([]);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   return (
@@ -171,10 +167,6 @@ export function CommandSearch() {
                         {asset.metadata.name}
                       </p>
                     )}
-
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Created: {formatDate(asset.created_at)}
-                    </p>
                   </div>
                 </CommandItem>
               ))}
@@ -182,7 +174,7 @@ export function CommandSearch() {
           )}
 
           <CommandSeparator />
-          <div className="px-2 text-xs text-center text-muted-foreground">
+          <div className="px-2 py-3 mt-auto sticky bottom-0 bg-popover text-xs text-center text-muted-foreground">
             Press{" "}
             <kbd className="px-1 py-0.5 rounded border bg-muted font-mono">
               ↑
