@@ -15,6 +15,8 @@ interface IpGraphState {
     nodes: Node[];
     edges: Edge[];
   };
+  isOpenDialogDetailIP: boolean;
+  setIsOpenDialogDetailIP: (isOpen: boolean) => void;
 }
 
 export const useIpGraphStore = create<IpGraphState>((set) => ({
@@ -49,7 +51,7 @@ export const useIpGraphStore = create<IpGraphState>((set) => ({
       if (!processedNodeIds.has(track.child_id)) {
         nodes.push({
           id: track.child_id,
-          type: "selectedIpAsset",
+          type: "ipAsset",
           position: { x: 0, y: 100 * track.depth },
           data: {
             asset_id: track.parent_id,
@@ -69,4 +71,6 @@ export const useIpGraphStore = create<IpGraphState>((set) => ({
 
     return { nodes, edges };
   },
+  isOpenDialogDetailIP: false,
+  setIsOpenDialogDetailIP: (isOpen) => set({ isOpenDialogDetailIP: isOpen })
 }));

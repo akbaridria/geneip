@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import dagre from "@dagrejs/dagre";
 import { Position, type Edge, type Node } from "@xyflow/react";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -9,8 +10,8 @@ export function cn(...inputs: ClassValue[]) {
 
 const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 380;
-const nodeHeight = 420;
+const nodeWidth = 400;
+const nodeHeight = 600;
 
 export const getLayoutedElements = (
   nodes: Node[],
@@ -47,4 +48,15 @@ export const getLayoutedElements = (
   });
 
   return { nodes: newNodes, edges };
+};
+
+export const copyAddress = (address: string) => {
+  navigator.clipboard.writeText(address);
+  toast("Address copied to clipboard", {
+    description: "Wallet address copied to clipboard",
+  });
+};
+
+export const truncateAddress = (address: string) => {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };

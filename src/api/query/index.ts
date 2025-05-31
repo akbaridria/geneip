@@ -14,3 +14,13 @@ export const useTrackById = (id: string, enabled = !!id) =>
     queryFn: () => fetchTrackById(id),
     enabled,
   });
+
+export const useGetIpAssetById = (id: string, enabled = !!id) =>
+  useQuery<IpAsset | null, Error>({
+    queryKey: queryKeys.ipAssetById(id),
+    queryFn: () =>
+      fetchSearchIpAsset(id).then((assets) => {
+        return assets.length > 0 ? assets[0] : null;
+      }),
+    enabled,
+  });

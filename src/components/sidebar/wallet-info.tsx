@@ -7,11 +7,11 @@ import {
   SidebarGroupContent,
 } from "../ui/sidebar";
 import { Skeleton } from "../ui/skeleton";
-import { toast } from "sonner";
 import Avatar from "boring-avatars";
 import { useAccount, useBalance } from "wagmi";
 import { useMemo } from "react";
 import { formatEther } from "viem";
+import { copyAddress, truncateAddress } from "@/lib/utils";
 
 const WalletSkeleton = () => (
   <Card>
@@ -38,17 +38,6 @@ const WalletInfo = () => {
     };
   }, [address, data]);
 
-  const copyAddress = () => {
-    navigator.clipboard.writeText(walletData.address);
-    toast("Address copied to clipboard", {
-      description: "Wallet address copied to clipboard",
-    });
-  };
-
-  const truncateAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
   if (walletLoading) return <WalletSkeleton />;
 
   return (
@@ -72,7 +61,7 @@ const WalletInfo = () => {
                     variant="ghost"
                     size="sm"
                     className="h-6 w-6 p-0"
-                    onClick={copyAddress}
+                    onClick={() => copyAddress(walletData.address || "")}
                   >
                     <Copy className="h-3 w-3" />
                   </Button>

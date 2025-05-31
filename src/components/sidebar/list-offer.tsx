@@ -16,14 +16,14 @@ const offers = [
     id: 1,
     name: "Crypto Punk #1234",
     image: "/placeholder.svg?height=40&width=40",
-    offer: "2.1 ETH",
+    offer: "2.1 IP",
     expires: "2h",
   },
   {
     id: 2,
     name: "Bored Ape #5678",
     image: "/placeholder.svg?height=40&width=40",
-    offer: "15.5 ETH",
+    offer: "15.5 IP",
     expires: "1d",
   },
 ];

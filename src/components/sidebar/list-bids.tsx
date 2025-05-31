@@ -16,14 +16,14 @@ const bids = [
     id: 1,
     name: "Art Collection #999",
     image: "/placeholder.svg?height=40&width=40",
-    bid: "0.8 ETH",
+    bid: "0.8 IP",
     status: "pending",
   },
   {
     id: 2,
     name: "Music NFT #123",
     image: "/placeholder.svg?height=40&width=40",
-    bid: "0.4 ETH",
+    bid: "0.4 IP",
     status: "outbid",
   },
 ];

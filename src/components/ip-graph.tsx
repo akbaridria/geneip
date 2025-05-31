@@ -14,10 +14,11 @@ import {
 } from "@xyflow/react";
 import { useIpGraphStore } from "@/store";
 import { useTrackById } from "@/api/query";
-import IpAssetNode from "@/components/react-flow/custom-nodes";
+import IpAssetNode from "@/components/react-flow/ip-asset-node";
 import { Loader2, Search } from "lucide-react";
 import { cn, getLayoutedElements } from "@/lib/utils";
 import { toast } from "sonner";
+import { CommandSearch } from "./command-search";
 
 const nodeTypes: NodeTypes = {
   ipAsset: IpAssetNode,
@@ -60,12 +61,11 @@ export function IpGraph() {
   }, [getGraphDataFromLineage, setNodes, setEdges, trackData]);
 
   const isLoadingState = trackLoading || isLoading;
-  const hasData = nodes.length > 0;
 
   const renderIdleState = () => {
     if (!selectedAssetId) {
       return (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70">
+        <div className="absolute inset-0 z-3 flex items-center justify-center bg-background/70">
           <div className="p-8 rounded-lg border bg-card shadow-md">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="p-4 rounded-full bg-muted/20">
@@ -88,7 +88,7 @@ export function IpGraph() {
   const renderLoadingState = () => {
     if (isLoadingState) {
       return (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70 backdrop-blur-[2px]">
+        <div className="absolute inset-0 z-3 flex items-center justify-center bg-background/70 backdrop-blur-[2px]">
           <div className="p-8 rounded-lg border bg-card/95 shadow-md">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="p-4 rounded-full bg-muted/20">
@@ -111,6 +111,7 @@ export function IpGraph() {
   return (
     <div className="relative h-full w-full">
       {/* ReactFlow - always rendered */}
+      <CommandSearch />
       <div className={cn("h-full w-full", isLoadingState && "blur-[2px]")}>
         <ReactFlow
           nodes={nodes}
@@ -118,12 +119,8 @@ export function IpGraph() {
           nodeTypes={nodeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          fitView={hasData}
-          fitViewOptions={{ padding: 0.2 }}
-          contentEditable={false}
+          fitView
           colorMode="dark"
-          proOptions={{ hideAttribution: true }}
-          draggable
         >
           <Background variant={BackgroundVariant.Dots} />
           <Controls />

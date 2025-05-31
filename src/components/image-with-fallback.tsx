@@ -16,18 +16,22 @@ interface ImageWithFallbackProps
   showLoadingSpinner?: boolean;
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   wrapperClassName?: string;
+  aspectRatio?: "square" | "video" | "auto" | string;
+  fill?: boolean;
 }
 
 export function ImageWithFallback({
   src,
   alt,
-  width = 200,
-  height = 200,
+  width,
+  height,
   className,
   fallbackSrc,
   showLoadingSpinner = true,
   objectFit = "cover",
   wrapperClassName,
+  aspectRatio = "auto",
+  fill = false,
   style,
   ...props
 }: ImageWithFallbackProps) {
@@ -44,6 +48,29 @@ export function ImageWithFallback({
     setHasError(true);
   };
 
+  // Get aspect ratio class
+  const getAspectRatioClass = () => {
+    switch (aspectRatio) {
+      case "square":
+        return "aspect-square";
+      case "video":
+        return "aspect-video";
+      case "auto":
+        return "";
+      default:
+        return aspectRatio.startsWith("aspect-")
+          ? aspectRatio
+          : `aspect-[${aspectRatio}]`;
+    }
+  };
+
+  const wrapperStyle = fill
+    ? {}
+    : {
+        width: width || "100%",
+        height: height || (aspectRatio === "auto" ? "auto" : undefined),
+      };
+
   const imgStyle = {
     objectFit,
     ...style,
@@ -54,27 +81,25 @@ export function ImageWithFallback({
     return (
       <div
         className={cn(
-          "flex items-center justify-center bg-muted border border-border rounded-md",
+          "flex items-center justify-center bg-sidebar overflow-hidden",
+          fill ? "absolute inset-0" : "relative",
+          !fill && getAspectRatioClass(),
           wrapperClassName
         )}
-        style={{ width, height }}
+        style={wrapperStyle}
       >
         {fallbackSrc ? (
           <img
             src={fallbackSrc || "/placeholder.svg"}
             alt={alt}
-            width={width}
-            height={height}
-            className={cn("object-cover rounded-md", className)}
-            style={imgStyle}
+            className={cn("w-full h-full object-cover", className)}
             onError={() => {
-              // If fallback also fails, show icon
               setHasError(true);
             }}
             {...props}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-muted-foreground p-4">
+          <div className="flex flex-col items-center justify-center text-sidebar-foreground/50 p-4">
             <ImageIcon className="h-8 w-8 mb-2" />
             <span className="text-xs text-center">No image</span>
           </div>
@@ -84,14 +109,19 @@ export function ImageWithFallback({
   }
 
   return (
-    <div className={cn("relative", wrapperClassName)} style={{ width, height }}>
+    <div
+      className={cn(
+        "relative overflow-hidden",
+        fill ? "absolute inset-0" : "",
+        !fill && getAspectRatioClass(),
+        wrapperClassName
+      )}
+      style={wrapperStyle}
+    >
       {/* Loading spinner overlay */}
       {isLoading && showLoadingSpinner && (
-        <div
-          className="absolute inset-0 flex items-center justify-center bg-muted border border-border rounded-md z-10"
-          style={{ width, height }}
-        >
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <Loader2 className="h-6 w-6 animate-spin text-sidebar-foreground/50" />
         </div>
       )}
 
@@ -99,10 +129,8 @@ export function ImageWithFallback({
       <img
         src={src || "/placeholder.svg"}
         alt={alt}
-        width={width}
-        height={height}
         className={cn(
-          "rounded-md transition-opacity duration-200",
+          "w-full h-full transition-opacity duration-200",
           isLoading ? "opacity-0" : "opacity-100",
           className
         )}
@@ -115,30 +143,51 @@ export function ImageWithFallback({
   );
 }
 
-// Alternative simpler version for basic use cases
-export function SimpleImageWithFallback({
+// Responsive version that works well with fixed parent widths
+export function ResponsiveImageWithFallback({
   src,
   alt,
   className,
-  width = 200,
-  height = 200,
+  aspectRatio = "square",
   ...props
 }: {
   src?: string;
   alt: string;
   className?: string;
-  width?: number | string;
-  height?: number | string;
+  aspectRatio?: "square" | "video" | "auto" | string;
   [key: string]: unknown;
 }) {
   return (
     <ImageWithFallback
-      src={src || "/placeholder.svg?height=200&width=200"}
+      src={src || "/placeholder.svg"}
       alt={alt}
-      width={width}
-      height={height}
+      aspectRatio={aspectRatio}
       className={className}
-      fallbackSrc="/placeholder.svg?height=200&width=200"
+      objectFit="cover"
+      {...props}
+    />
+  );
+}
+
+// Fill version for absolute positioning (like Next.js Image with fill)
+export function FillImageWithFallback({
+  src,
+  alt,
+  className,
+  ...props
+}: {
+  src?: string;
+  alt: string;
+  className?: string;
+  [key: string]: unknown;
+}) {
+  return (
+    <ImageWithFallback
+      src={src || "/placeholder.svg"}
+      alt={alt}
+      fill={true}
+      className={className}
+      objectFit="cover"
       {...props}
     />
   );

@@ -83,7 +83,7 @@ export function CommandSearch() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-4 left-1/2 -translate-x-1/2 inline-flex items-center justify-between w-full max-w-[400px] px-3 py-2 text-sm border rounded-md shadow-sm bg-sidebar border-input hover:bg-accent hover:text-accent-foreground z-50 transition-colors"
+        className="absolute inset-0 top-4 left-1/2 -translate-x-1/2 inline-flex items-center justify-between w-full max-w-[400px] px-3 py-2 text-sm border rounded-md shadow-sm bg-sidebar border-input hover:bg-accent hover:text-accent-foreground z-5 transition-colors h-fit"
         aria-label="Open search dialog"
       >
         <div className="inline-flex items-center gap-2">
