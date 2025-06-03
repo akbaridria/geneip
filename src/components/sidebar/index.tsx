@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { Plus } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -43,10 +43,16 @@ const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
                   Protect and monetize your intellectual property on the
                   blockchain.
                 </p>
-                <Button className="w-full" size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Register IP Now
-                </Button>
+                <a
+                  href="https://portal.story.foundation/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button className="w-full" size="sm">
+                    Register IP Now
+                    <ArrowUpRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </a>
               </CardContent>
             </Card>
           </SidebarGroupContent>

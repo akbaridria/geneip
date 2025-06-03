@@ -1,4 +1,6 @@
-import { Wallet, Loader2, Copy } from "lucide-react";
+"use client";
+
+import { Wallet, Loader2, Copy, Globe } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import {
@@ -7,8 +9,9 @@ import {
   SidebarGroupContent,
 } from "../ui/sidebar";
 import { Skeleton } from "../ui/skeleton";
+import { Badge } from "../ui/badge";
 import Avatar from "boring-avatars";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useChainId } from "wagmi";
 import { useMemo } from "react";
 import { formatEther } from "viem";
 import { copyAddress, truncateAddress } from "@/lib/utils";
@@ -23,34 +26,60 @@ const WalletSkeleton = () => (
           <Skeleton className="h-6 w-20" />
         </div>
       </div>
+      <div className="mt-3">
+        <Skeleton className="h-5 w-32" />
+      </div>
     </CardContent>
   </Card>
 );
 
 const WalletInfo = () => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { data, isLoading: walletLoading } = useBalance({ address });
+  const chainId = useChainId();
 
   const walletData = useMemo(() => {
     return {
       address: address || "-",
       balance: data?.value ? formatEther(data?.value || 0n, "wei") : "-",
+      chainId,
     };
-  }, [address, data]);
+  }, [address, data, chainId]);
+
+  if (!isConnected) {
+    return (
+      <SidebarGroup>
+        <SidebarGroupLabel className="text-sm font-medium mb-3">
+          <Wallet className="h-4 w-4 mr-2" />
+          Wallet Not Connected
+        </SidebarGroupLabel>
+        <SidebarGroupContent>
+          <Card className="p-0">
+            <CardContent className="px-4 py-4">
+              <div className="text-center text-muted-foreground">
+                <Wallet className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Connect your wallet to continue</p>
+              </div>
+            </CardContent>
+          </Card>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    );
+  }
 
   if (walletLoading) return <WalletSkeleton />;
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-sm font-medium mb-3">
+      <SidebarGroupLabel className="text-sm font-medium">
         <Wallet className="h-4 w-4 mr-2" />
         Wallet Connected
         {walletLoading && <Loader2 className="h-3 w-3 ml-2 animate-spin" />}
       </SidebarGroupLabel>
       <SidebarGroupContent>
-        <Card className="p-0">
-          <CardContent className="px-4 py-4">
-            <div className="flex items-center gap-3">
+        <Card className="p-0 mt-4">
+          <CardContent className="p-0">
+            <div className="flex items-center gap-3 p-4">
               <Avatar name={walletData.address} size={48} variant="beam" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -67,9 +96,20 @@ const WalletInfo = () => {
                   </Button>
                 </div>
                 <div className="text-lg font-semibold">
-                  {walletData.balance} IP
+                  {walletData.balance} ETH
                 </div>
               </div>
+            </div>
+
+            {/* Network Information */}
+            <div className="flex items-center justify-between p-3 border-t border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Globe className="h-4 w-4" />
+                <span>Connected to</span>
+              </div>
+              <Badge variant={"secondary"} className="text-xs">
+                Story Aeneid Testnet
+              </Badge>
             </div>
           </CardContent>
         </Card>

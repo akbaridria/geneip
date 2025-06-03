@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Node, Edge } from "@xyflow/react";
+import { type Node, type Edge, MarkerType } from "@xyflow/react";
 import type { Track } from "@/types";
 
 interface IpGraphState {
@@ -54,8 +54,8 @@ export const useIpGraphStore = create<IpGraphState>((set) => ({
           type: "ipAsset",
           position: { x: 0, y: 100 * track.depth },
           data: {
-            asset_id: track.parent_id,
-            metadata: track.parent_metadata,
+            asset_id: track.child_id,
+            metadata: track.child_metadata,
           },
         });
         processedNodeIds.add(track.child_id);
@@ -65,12 +65,23 @@ export const useIpGraphStore = create<IpGraphState>((set) => ({
         id: `${track.parent_id}-${track.child_id}`,
         source: track.parent_id,
         target: track.child_id,
-        animated: true,
+        animated: false,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 18,
+          height: 18,
+          color: "white",
+        },
+        // label: "marker size and color",
+        style: {
+          strokeWidth: 1,
+          stroke: "white",
+        },
       });
     });
 
     return { nodes, edges };
   },
   isOpenDialogDetailIP: false,
-  setIsOpenDialogDetailIP: (isOpen) => set({ isOpenDialogDetailIP: isOpen })
+  setIsOpenDialogDetailIP: (isOpen) => set({ isOpenDialogDetailIP: isOpen }),
 }));

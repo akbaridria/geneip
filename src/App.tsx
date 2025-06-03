@@ -10,9 +10,10 @@ import { TomoEVMKitProvider } from "@tomo-inc/tomo-evm-kit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "./config";
-import { IpGraph } from "./components/ip-graph";
+import IpGraphWrapper from "./components/ip-graph";
 
 import "@xyflow/react/dist/style.css";
+import DialogDetailIP from "./components/dialog-detail-ip";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -25,22 +26,13 @@ const App = () => {
             <Toaster richColors closeButton />
             <DesktopRequired />
             <LoginForm />
+            <DialogDetailIP />
             <div className="w-screen h-screen">
               <SidebarProvider>
                 <div className="flex w-screen h-screen">
                   <AppSidebar />
                   <SidebarInset className="flex-1">
-                    <IpGraph />
-                    {/* <ReactFlow
-                      nodes={nodes}
-                      edges={edges}
-                      onNodesChange={onNodesChange}
-                      fitView
-                      contentEditable={false}
-                      colorMode="dark"
-                    >
-                      <Background variant={BackgroundVariant.Dots} />
-                    </ReactFlow> */}
+                    <IpGraphWrapper />
                   </SidebarInset>
                 </div>
               </SidebarProvider>

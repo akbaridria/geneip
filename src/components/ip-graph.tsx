@@ -9,6 +9,8 @@ import {
   type NodeTypes,
   useNodesState,
   useEdgesState,
+  useReactFlow,
+  ReactFlowProvider,
   type Edge,
   type Node,
 } from "@xyflow/react";
@@ -24,11 +26,12 @@ const nodeTypes: NodeTypes = {
   ipAsset: IpAssetNode,
 };
 
-export function IpGraph() {
+function IpGraph() {
   const { selectedAssetId, isLoading, getGraphDataFromLineage } =
     useIpGraphStore();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const { fitView } = useReactFlow();
 
   const {
     data: trackData,
@@ -53,12 +56,17 @@ export function IpGraph() {
         const data = getLayoutedElements(graphData.nodes, graphData.edges);
         setNodes(data.nodes);
         setEdges(data.edges);
+        fitView({
+          padding: {
+            top: 0.2,
+          },
+        });
       } catch (err) {
         console.error("Failed to process graph data:", err);
         toast.error("Failed to process graph data");
       }
     }
-  }, [getGraphDataFromLineage, setNodes, setEdges, trackData]);
+  }, [getGraphDataFromLineage, setNodes, setEdges, fitView, trackData]);
 
   const isLoadingState = trackLoading || isLoading;
 
@@ -109,27 +117,35 @@ export function IpGraph() {
   };
 
   return (
-    <div className="relative h-full w-full">
-      {/* ReactFlow - always rendered */}
-      <CommandSearch />
-      <div className={cn("h-full w-full", isLoadingState && "blur-[2px]")}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          fitView
-          colorMode="dark"
-        >
-          <Background variant={BackgroundVariant.Dots} />
-          <Controls />
-        </ReactFlow>
-      </div>
+      <div className="relative h-full w-full">
+        {/* ReactFlow - always rendered */}
+        <CommandSearch />
+        <div className={cn("h-full w-full", isLoadingState && "blur-[2px]")}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            fitView
+            colorMode="dark"
+          >
+            <Background variant={BackgroundVariant.Dots} />
+            <Controls />
+          </ReactFlow>
+        </div>
 
-      {/* Render states */}
-      {renderIdleState()}
-      {renderLoadingState()}
-    </div>
+        {/* Render states */}
+        {renderIdleState()}
+        {renderLoadingState()}
+      </div>
+  );
+}
+
+export default function IpGraphWrapper() {
+  return (
+    <ReactFlowProvider>
+      <IpGraph />
+    </ReactFlowProvider>
   );
 }
