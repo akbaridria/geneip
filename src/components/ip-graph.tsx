@@ -57,6 +57,8 @@ function IpGraph() {
         setNodes(data.nodes);
         setEdges(data.edges);
         fitView({
+          nodes: [{ id: selectedAssetId || "" }],
+          maxZoom: 0.6,
           padding: {
             top: 0.2,
           },
@@ -66,7 +68,7 @@ function IpGraph() {
         toast.error("Failed to process graph data");
       }
     }
-  }, [getGraphDataFromLineage, setNodes, setEdges, fitView, trackData]);
+  }, [getGraphDataFromLineage, setNodes, setEdges, fitView, trackData, selectedAssetId]);
 
   const isLoadingState = trackLoading || isLoading;
 
@@ -117,28 +119,30 @@ function IpGraph() {
   };
 
   return (
-      <div className="relative h-full w-full">
-        {/* ReactFlow - always rendered */}
-        <CommandSearch />
-        <div className={cn("h-full w-full", isLoadingState && "blur-[2px]")}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            fitView
-            colorMode="dark"
-          >
-            <Background variant={BackgroundVariant.Dots} />
-            <Controls />
-          </ReactFlow>
-        </div>
-
-        {/* Render states */}
-        {renderIdleState()}
-        {renderLoadingState()}
+    <div className="relative h-full w-full">
+      {/* ReactFlow - always rendered */}
+      <CommandSearch />
+      <div className={cn("h-full w-full", isLoadingState && "blur-[2px]")}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          fitView
+          colorMode="dark"
+          draggable={false}
+          nodesDraggable={false}
+        >
+          <Background variant={BackgroundVariant.Dots} />
+          <Controls />
+        </ReactFlow>
       </div>
+
+      {/* Render states */}
+      {renderIdleState()}
+      {renderLoadingState()}
+    </div>
   );
 }
 

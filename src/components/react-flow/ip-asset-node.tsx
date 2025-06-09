@@ -17,6 +17,7 @@ import { useDetailIp } from "@/hooks/use-detail-ip";
 import { truncateAddress } from "@/lib/utils";
 import { ShineBorder } from "../magicui/shine-border";
 import { useIpGraphStore } from "@/store";
+import { useMemo } from "react";
 
 type IpAssetNodeType = Node<IpAssetNodeData, "ipAsset">;
 
@@ -39,6 +40,23 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
   } = useDetailIp(nftData?.asset_id);
   const { selectedAssetId, setIsOpenDialogDetailIP } = useIpGraphStore();
 
+  const contractName = useMemo(() => {
+    return nftData.metadata?.name
+      ? (() => {
+          const name = nftData.metadata.name;
+          const match = name.match(/^\d+:\s*([^#]+)\s*#\d+$/);
+          return match ? match[1].trim() : name;
+        })()
+      : "N/A";
+  }, [nftData.metadata?.name]);
+
+  const assetName = useMemo(() => {
+    if (nftData.metadata?.title) {
+      return nftData.metadata.title + " #" + nftData.metadata.tokenId;
+    }
+    return nftData.metadata?.name;
+  }, [nftData]);
+
   return (
     <div className="w-full min-w-[390px] max-w-[400px]">
       <Handle
@@ -47,10 +65,11 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
         className="w-3 h-3 !bg-primary border-2 border-background z-10"
       />
       <Card className="group relative overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 bg-sidebar backdrop-blur-sm py-0">
-        {selectedAssetId?.toLowerCase() === nftData?.asset_id.toLowerCase() && (
+        {selectedAssetId?.toLowerCase() ===
+          nftData?.asset_id?.toLowerCase() && (
           <ShineBorder
             shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-            borderWidth={1}
+            borderWidth={4}
           />
         )}
         <CardContent className="p-0">
@@ -123,20 +142,12 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
           </div>
           <div className="p-4 space-y-3">
             <div>
-              <p className="text-sm text-muted-foreground">
-                {nftData.metadata?.name
-                  ? (() => {
-                      const name = nftData.metadata.name;
-                      const match = name.match(/^\d+:\s*([^#]+)\s*#\d+$/);
-                      return match ? match[1].trim() : name;
-                    })()
-                  : "N/A"}
-              </p>
+              <p className="text-sm text-muted-foreground">{contractName}</p>
               <h3
                 className="font-semibold text-xl leading-tight text-foreground truncate"
-                title={nftData.metadata?.name || "N/A"}
+                title={assetName || "N/A"}
               >
-                {nftData.metadata?.name || "N/A"}
+                {assetName || "N/A"}
               </h3>
             </div>
 

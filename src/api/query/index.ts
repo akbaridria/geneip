@@ -1,6 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchSearchIpAsset, fetchTrackById } from "@/api/endpoints";
-import type { IpAsset, Track } from "@/types";
+import {
+  fetchAllNFTs,
+  fetchSearchIpAsset,
+  fetchTrackById,
+} from "@/api/endpoints";
+import type { IpAsset, NFT, Track } from "@/types";
 import { queryKeys } from "../constant/query-keys";
 
 export const useSearchIpAsset = () =>
@@ -22,5 +26,12 @@ export const useGetIpAssetById = (id: string, enabled = !!id) =>
       fetchSearchIpAsset(id).then((assets) => {
         return assets.length > 0 ? assets[0] : null;
       }),
+    enabled,
+  });
+
+export const useGetAllNfts = (address: string, enabled = !!address) =>
+  useQuery<NFT[], Error>({
+    queryKey: queryKeys.getAllNftsByAddress(address),
+    queryFn: () => fetchAllNFTs(address).then((res) => res.items),
     enabled,
   });

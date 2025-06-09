@@ -10,4 +10,9 @@ const fetchTrackById = (id: string) =>
     .get(`/track/${id}`)
     .then((res) => res.data.results);
 
-export { fetchSearchIpAsset, fetchTrackById };
+const fetchAllNFTs = (address: string) =>
+  apiClient("blockscout")
+    .get(`/addresses/${address}/nft`)
+    .then((res) => res.data);
+
+export { fetchSearchIpAsset, fetchTrackById, fetchAllNFTs };

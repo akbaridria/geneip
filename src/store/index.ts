@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { type Node, type Edge, MarkerType } from "@xyflow/react";
 import type { Track } from "@/types";
+import { toast } from "sonner";
 
 interface IpGraphState {
   selectedAssetId: string | null;
@@ -34,7 +35,17 @@ export const useIpGraphStore = create<IpGraphState>((set) => ({
     const edges: Edge[] = [];
     const processedNodeIds = new Set<string>();
 
+    if (lineage.length > 100) {
+      toast.warning("Warning: Large Lineage Data", {
+        description:
+          "The lineage has more than 100 tracks, which may affect performance.",
+      });
+    }
+
     lineage.forEach((track) => {
+      if (nodes.length >= 100) {
+        return;
+      }
       if (!processedNodeIds.has(track.parent_id)) {
         nodes.push({
           id: track.parent_id,

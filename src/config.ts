@@ -8,6 +8,7 @@ const basePublicUrl =
 const baseBlockscoutApiUrl = import.meta.env.VITE_BASE_BLOCKSCOUT_API_URL!;
 const baseAeneidApiUrl = import.meta.env.VITE_BASE_AENID_API_URL!;
 const baseAeneidApiKey = import.meta.env.VITE_BASE_AENID_API_KEY!;
+const IP_ASSET_REGISTRY_ADDRESS = "0x77319B4031e6eF1250907aa00018B8B1c67a244b";
 
 const supportedChainIds: number[] = [storyAeneid.id];
 
@@ -27,4 +28,5 @@ export {
   baseBlockscoutApiUrl,
   basePublicUrl,
   baseAeneidApiKey,
+  IP_ASSET_REGISTRY_ADDRESS
 };

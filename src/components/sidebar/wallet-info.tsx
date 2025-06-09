@@ -15,21 +15,33 @@ import { useAccount, useBalance, useChainId } from "wagmi";
 import { useMemo } from "react";
 import { formatEther } from "viem";
 import { copyAddress, truncateAddress } from "@/lib/utils";
+import { MagicCard } from "../magicui/magic-card";
+import { storyAeneid } from "wagmi/chains";
 
 const WalletSkeleton = () => (
-  <Card>
-    <CardContent className="p-4">
-      <div className="flex items-center gap-3 mb-3">
-        <Skeleton className="h-10 w-10 rounded-full" />
-        <div className="flex-1 min-w-0">
-          <Skeleton className="h-4 w-24 mb-2" />
-          <Skeleton className="h-6 w-20" />
+  <Card className="p-0 mt-4">
+    <div className="relative overflow-hidden rounded-lg">
+      <CardContent className="p-0">
+        <div className="flex items-center gap-3 p-4">
+          <Skeleton className="h-12 w-12 rounded-full animate-pulse" />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Skeleton className="h-4 w-24 rounded animate-pulse" />
+              <Skeleton className="h-4 w-6 rounded animate-pulse" />
+            </div>
+            <Skeleton className="h-6 w-20 rounded animate-pulse" />
+          </div>
         </div>
-      </div>
-      <div className="mt-3">
-        <Skeleton className="h-5 w-32" />
-      </div>
-    </CardContent>
+        {/* Network Information Skeleton */}
+        <div className="flex items-center justify-between p-3 border-t border-border">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Skeleton className="h-4 w-4 rounded animate-pulse" />
+            <Skeleton className="h-4 w-20 rounded animate-pulse" />
+          </div>
+          <Skeleton className="h-5 w-24 rounded-full animate-pulse" />
+        </div>
+      </CardContent>
+    </div>
   </Card>
 );
 
@@ -78,40 +90,44 @@ const WalletInfo = () => {
       </SidebarGroupLabel>
       <SidebarGroupContent>
         <Card className="p-0 mt-4">
-          <CardContent className="p-0">
-            <div className="flex items-center gap-3 p-4">
-              <Avatar name={walletData.address} size={48} variant="beam" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono">
-                    {truncateAddress(walletData.address || "")}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0"
-                    onClick={() => copyAddress(walletData.address || "")}
-                  >
-                    <Copy className="h-3 w-3" />
-                  </Button>
-                </div>
-                <div className="text-lg font-semibold">
-                  {walletData.balance} ETH
+          <MagicCard gradientColor={"#262626"} className="p-0">
+            <CardContent className="p-0">
+              <div className="flex items-center gap-3 p-4">
+                <Avatar name={walletData.address} size={48} variant="beam" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-mono">
+                      {truncateAddress(walletData.address || "")}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0"
+                      onClick={() => copyAddress(walletData.address || "")}
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="text-lg font-semibold">
+                    {parseFloat(walletData.balance).toFixed(6)} IP
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Network Information */}
-            <div className="flex items-center justify-between p-3 border-t border-border">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Globe className="h-4 w-4" />
-                <span>Connected to</span>
+              {/* Network Information */}
+              <div className="flex items-center justify-between p-3 border-t border-border">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Globe className="h-4 w-4" />
+                  <span>Connected to</span>
+                </div>
+                <Badge variant={"secondary"} className="text-xs">
+                  {chainId === storyAeneid.id
+                    ? storyAeneid.name
+                    : `Chain ${chainId}`}
+                </Badge>
               </div>
-              <Badge variant={"secondary"} className="text-xs">
-                Story Aeneid Testnet
-              </Badge>
-            </div>
-          </CardContent>
+            </CardContent>
+          </MagicCard>
         </Card>
       </SidebarGroupContent>
     </SidebarGroup>

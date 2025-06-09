@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { useDebounceValue } from "usehooks-ts";
 
@@ -13,7 +13,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useSearchIpAsset } from "@/api/query";
-import type { IpAsset as IpAssetType } from "@/types";
+import type { IpAsset as IpAssetType, Metadata } from "@/types";
 import { ImageWithFallback } from "./image-with-fallback";
 import { useIpGraphStore } from "@/store";
 
@@ -79,6 +79,23 @@ export function CommandSearch() {
     }
   };
 
+  const getContractName = useCallback((metadata: Metadata) => {
+    if (!metadata?.name) return "N/A";
+    const name = metadata.name;
+    const match = name.match(/^\d+:\s*([^#]+)\s*#\d+$/);
+    return match ? match[1].trim() : name;
+  }, []);
+
+  const getName = useCallback((metadata: Metadata) => {
+    if (metadata?.title) {
+      return metadata?.title + " #" + metadata.tokenId;
+    }
+    if (metadata?.name) {
+      return metadata?.name;
+    }
+    return "N/A";
+  }, []);
+
   return (
     <>
       <button
@@ -137,8 +154,8 @@ export function CommandSearch() {
                   onSelect={() => handleSelectAsset(asset)}
                   className="flex items-center gap-3 py-3 cursor-pointer"
                   value={`${asset.asset_id} ${asset.metadata?.name || ""} ${
-                    asset.metadata?.name || ""
-                  }`}
+                    asset.metadata?.description || ""
+                  } ${asset.metadata?.title || ""}`}
                 >
                   <div className="flex-shrink-0">
                     <ImageWithFallback
@@ -154,7 +171,7 @@ export function CommandSearch() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-medium text-sm truncate">
-                        {asset.metadata?.name || `Asset #${asset.asset_id}`}
+                        {getContractName(asset.metadata)}
                       </h4>
                     </div>
 
@@ -164,7 +181,7 @@ export function CommandSearch() {
 
                     {asset.metadata?.name && (
                       <p className="text-xs text-muted-foreground truncate mt-1">
-                        {asset.metadata.name}
+                        {getName(asset.metadata)}
                       </p>
                     )}
                   </div>

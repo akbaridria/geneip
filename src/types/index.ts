@@ -5,6 +5,8 @@ export interface Metadata {
   imageUrl: string;
   tokenUri: string;
   tokenContract: string;
+  title?: string;
+  description?: string;
 }
 
 export interface IpAsset {
@@ -58,4 +60,26 @@ export interface Activity {
   timestamp: string;
   details: string;
   price?: string;
+}
+
+export interface NFT {
+  id: string;
+  image_url: string;
+  media_url: string;
+  metadata: {
+    name: string;
+    description: string;
+  };
+  token: Token;
+  token_type: string;
+  value: string;
+}
+export interface Token {
+  address: string;
+  address_hash: string;
+  holders: string;
+  holders_count: string;
+  name: string;
+  symbol: string;
+  type: string;
 }
