@@ -131,8 +131,8 @@ function IpGraph() {
           onEdgesChange={onEdgesChange}
           fitView
           colorMode="dark"
-          draggable={false}
-          nodesDraggable={false}
+          edgesFocusable={false}
+          nodesFocusable={false}
         >
           <Background variant={BackgroundVariant.Dots} />
           <Controls />

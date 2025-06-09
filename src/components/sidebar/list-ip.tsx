@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageIcon, Loader2, Plus, Shield, ChevronRight } from "lucide-react";
+import { ImageIcon, Loader2, Shield, ChevronRight } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -27,6 +27,7 @@ import type { NFT } from "@/types";
 import { IP_ASSET_REGISTRY_ABI } from "@/abis";
 import { IP_ASSET_REGISTRY_ADDRESS } from "@/config";
 import { ImageWithFallback } from "../image-with-fallback";
+import { useIpGraphStore } from "@/store";
 
 const AssetSkeleton = () => (
   <SidebarMenuItem>
@@ -53,10 +54,6 @@ const EmptyState = () => (
       You don't have any IP assets or NFTs yet. Start by connecting your wallet
       or creating your first asset.
     </p>
-    <Button size="sm" className="h-8">
-      <Plus className="h-3 w-3 mr-1" />
-      Add Asset
-    </Button>
   </div>
 );
 
@@ -131,6 +128,7 @@ const ListIp = () => {
 
 const Asset: React.FC<{ data: NFT }> = ({ data }) => {
   const chainId = useChainId();
+  const { setSelectedAssetId } = useIpGraphStore();
 
   const { data: predictedIpId } = useReadContract({
     address: IP_ASSET_REGISTRY_ADDRESS,
@@ -142,7 +140,6 @@ const Asset: React.FC<{ data: NFT }> = ({ data }) => {
       BigInt(data.id),
     ],
   });
-  console.log(predictedIpId);
 
   const isIpAsset = useMemo(() => !!predictedIpId, [predictedIpId]);
 
@@ -154,7 +151,7 @@ const Asset: React.FC<{ data: NFT }> = ({ data }) => {
           alt={data.token.name}
           width={40}
           height={40}
-          fallbackSrc="https://placehold.co/40x40?text=No+Image"
+          fallbackSrc="https://placehold.co/40x40/18181b/9f9fa9?text=No+Image"
           className="rounded-md"
         />
         <div className="absolute -top-1 -right-1">
@@ -172,19 +169,32 @@ const Asset: React.FC<{ data: NFT }> = ({ data }) => {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <div className="text-sm font-medium truncate">{data.token.name}</div>
-          {!isIpAsset && (
+          {isIpAsset && (
             <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
               IP
             </Badge>
           )}
         </div>
-        <div className="text-xs text-muted-foreground">{data.metadata.name + ' #' + data.id}</div>
+        <div className="text-xs text-muted-foreground">
+          {data.metadata.name + " #" + data.id}
+        </div>
       </div>
       {isIpAsset && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <Button className="h-6 w-6 p-0" size="icon" variant="outline">
+              <Button
+                className="h-6 w-6 p-0"
+                size="icon"
+                variant="outline"
+                onClick={() => {
+                  setSelectedAssetId(
+                    predictedIpId
+                      ? (predictedIpId.toLowerCase() as string)
+                      : null
+                  );
+                }}
+              >
                 <ChevronRight className="h-3 w-3" />
               </Button>
             </TooltipTrigger>

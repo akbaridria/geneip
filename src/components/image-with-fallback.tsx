@@ -81,7 +81,7 @@ export function ImageWithFallback({
     return (
       <div
         className={cn(
-          "flex items-center justify-center bg-sidebar overflow-hidden",
+          "flex items-center justify-center bg-sidebar overflow-hidden rounded-md",
           fill ? "absolute inset-0" : "relative",
           !fill && getAspectRatioClass(),
           wrapperClassName

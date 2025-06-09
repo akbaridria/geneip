@@ -77,8 +77,10 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
             <ImageWithFallback
               src={nftData?.metadata?.imageUrl || "/placeholder.svg"}
               alt={nftData?.metadata?.name || "NFT Image"}
+              fallbackSrc="https://placehold.co/40x40/18181b/9f9fa9?text=No+Image"
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-100 p-1 rounded-xl"
+              wrapperClassName="m-1"
             />
             {isOwner && (
               <div className="absolute top-3 left-3">
@@ -105,7 +107,7 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
                 </Badge>
               </div>
             )}
-            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end m-1">
+            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end m-1 rounded-md">
               <div className="w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3 text-white/90 text-sm">

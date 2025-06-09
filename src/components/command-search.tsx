@@ -163,7 +163,7 @@ export function CommandSearch() {
                       alt=""
                       width={48}
                       height={48}
-                      fallbackSrc="https://placehold.co/48x48?text=No+Image"
+                      fallbackSrc="https://placehold.co/48x48/18181b/9f9fa9?text=No+Image"
                       className="border rounded-lg"
                     />
                   </div>

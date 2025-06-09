@@ -74,6 +74,7 @@ const DialogDetailIP = () => {
                 <ImageWithFallback
                   src={metadata?.imageUrl || "/placeholder.svg"}
                   alt={metadata?.name || "NFT Image"}
+                  fallbackSrc="https://placehold.co/400x400/18181b/9f9fa9?text=No+Image"
                   fill
                   className="object-cover"
                 />
