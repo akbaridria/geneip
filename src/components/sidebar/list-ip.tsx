@@ -58,10 +58,9 @@ const EmptyState = () => (
 );
 
 const ListIp = () => {
-  const [assetsLoading] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const { address } = useAccount();
-  const { data } = useGetAllNfts(address || "");
+  const { data, isLoading } = useGetAllNfts(address || "");
 
   const allNfts = useMemo(() => data || [], [data]);
 
@@ -70,13 +69,13 @@ const ListIp = () => {
       <SidebarGroupLabel className="text-sm font-medium mb-3">
         <ImageIcon className="h-4 w-4 mr-2" />
         Your Assets{" "}
-        {!assetsLoading && allNfts.length > 0 && `(${allNfts.length})`}
-        {assetsLoading && <Loader2 className="h-3 w-3 ml-2 animate-spin" />}
+        {!isLoading && allNfts.length > 0 && `(${allNfts.length})`}
+        {isLoading && <Loader2 className="h-3 w-3 ml-2 animate-spin" />}
       </SidebarGroupLabel>
       <ScrollArea className="max-h-[272px]">
         <SidebarGroupContent>
           <SidebarMenu className="relative">
-            {assetsLoading ? (
+            {isLoading ? (
               <>
                 <AssetSkeleton />
                 <AssetSkeleton />
@@ -141,7 +140,17 @@ const Asset: React.FC<{ data: NFT }> = ({ data }) => {
     ],
   });
 
-  const isIpAsset = useMemo(() => !!predictedIpId, [predictedIpId]);
+  const { data: isRegistered } = useReadContract({
+    address: IP_ASSET_REGISTRY_ADDRESS,
+    abi: IP_ASSET_REGISTRY_ABI,
+    functionName: 'isRegistered',
+    args: [predictedIpId as `0x${string}`],
+    query: {
+      enabled: !!predictedIpId,
+    }
+  })
+
+  const isIpAsset = useMemo(() => isRegistered, [isRegistered]);
 
   return (
     <div className="flex items-center gap-3 w-full">

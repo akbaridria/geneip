@@ -7,6 +7,9 @@ interface IpGraphState {
   selectedAssetId: string | null;
   setSelectedAssetId: (id: string | null) => void;
 
+  selectedDetailAssetId: string | null;
+  setSelectedDetailAssetId: (id: string | null) => void;
+
   isLoading: boolean;
   setLoading: (isLoading: boolean) => void;
 
@@ -23,6 +26,9 @@ interface IpGraphState {
 export const useIpGraphStore = create<IpGraphState>((set) => ({
   selectedAssetId: null,
   setSelectedAssetId: (id) => set({ selectedAssetId: id }),
+
+  selectedDetailAssetId: null,
+  setSelectedDetailAssetId: (id) => set({ selectedDetailAssetId: id }),
 
   isLoading: false,
   setLoading: (isLoading) => set({ isLoading }),

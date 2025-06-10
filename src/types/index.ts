@@ -69,6 +69,12 @@ export interface NFT {
   metadata: {
     name: string;
     description: string;
+    attributes:
+      | {
+          trait_type: string;
+          value: string;
+        }[]
+      | undefined;
   };
   token: Token;
   token_type: string;

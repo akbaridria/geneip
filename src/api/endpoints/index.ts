@@ -15,4 +15,16 @@ const fetchAllNFTs = (address: string) =>
     .get(`/addresses/${address}/nft`)
     .then((res) => res.data);
 
-export { fetchSearchIpAsset, fetchTrackById, fetchAllNFTs };
+const fetchDetailNFT = (address: string, tokenId: string | number) =>
+  apiClient("blockscout").get(`/tokens/${address}/instances/${tokenId}`);
+
+const fetchCreatorOfNFT = (address: string) =>
+  apiClient("blockscout").get(`/addresses/${address}`);
+
+export {
+  fetchSearchIpAsset,
+  fetchTrackById,
+  fetchAllNFTs,
+  fetchDetailNFT,
+  fetchCreatorOfNFT,
+};
