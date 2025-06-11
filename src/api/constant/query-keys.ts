@@ -8,4 +8,9 @@ export const queryKeys = {
     tokenId,
   ],
   getCreatorNFT: (address: string) => ["getCreatorNFT", address],
+  getActivity: (nftContract: string, tokenId: string | number) => [
+    "getActivity",
+    nftContract,
+    tokenId,
+  ],
 };

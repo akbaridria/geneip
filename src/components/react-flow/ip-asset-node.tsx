@@ -1,44 +1,31 @@
-import { Tag, ShoppingCart, Eye, Heart } from "lucide-react";
+import { Tag, ShoppingCart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { ImageWithFallback } from "../image-with-fallback";
 import type { IpAssetNodeData } from "@/types";
 import { type NodeProps, type Node, Handle, Position } from "@xyflow/react";
-import { useDetailIp } from "@/hooks/use-detail-ip";
 import { truncateAddress } from "@/lib/utils";
 import { ShineBorder } from "../magicui/shine-border";
 import { useIpGraphStore } from "@/store";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import useIPNode from "@/hooks/use-ip-node";
+import DialogBuy from "../dialog-buy";
 
 type IpAssetNodeType = Node<IpAssetNodeData, "ipAsset">;
 
 const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
   data: nftData,
 }) => {
-  const {
-    isListed,
-    isOwner,
-    fixedPrice,
-    fixedPriceUsd,
-    isBuyDialogOpen,
-    activeBids,
-    highestBid,
-    owner,
-    views,
-    likes,
-    isLiked,
-    setIsBuyDialogOpen,
-  } = useDetailIp(nftData?.asset_id);
-  const { selectedAssetId, setIsOpenDialogDetailIP } = useIpGraphStore();
+  const { isListed, isOwner, activeBids, highestBid, owner, views, price } =
+    useIPNode(
+      nftData?.asset_id || "",
+      nftData?.metadata?.tokenContract || "",
+      nftData?.metadata?.tokenId || 0
+    );
+  const { selectedAssetId, setIsOpenDialogDetailIP, setSelectedDetailAssetId } =
+    useIpGraphStore();
+  const [isBuyDialogOpen, setIsBuyDialogOpen] = useState(false);
 
   const contractName = useMemo(() => {
     return nftData.metadata?.name
@@ -115,27 +102,16 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
                       <Eye className="w-4 h-4" />
                       <span>{views || 0}</span>
                     </div>
-                    <button
-                      //   onClick={(e) => {
-                      //     e.stopPropagation();
-                      //     setIsLiked(!isLiked);
-                      //   }}
-                      className="flex items-center gap-1 hover:text-red-400 transition-colors"
-                    >
-                      <Heart
-                        className={`w-4 h-4 ${
-                          isLiked ? "fill-red-400 text-red-400" : ""
-                        }`}
-                      />
-                      <span>{likes || 0}</span>
-                    </button>
                   </div>
                 </div>
 
                 <Button
                   variant="default"
                   className="w-full"
-                  onClick={() => setIsOpenDialogDetailIP(true)}
+                  onClick={() => {
+                    setIsOpenDialogDetailIP(true);
+                    setSelectedDetailAssetId(nftData.asset_id);
+                  }}
                 >
                   View Details
                 </Button>
@@ -159,10 +135,7 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
                   <>
                     <p className="text-sm text-muted-foreground">Fixed Price</p>
                     <p className="font-bold text-lg text-foreground">
-                      {fixedPrice} IP
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {fixedPriceUsd}
+                      {price} IP
                     </p>
                   </>
                 ) : highestBid ? (
@@ -170,9 +143,6 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
                     <p className="text-sm text-muted-foreground">Highest bid</p>
                     <p className="font-bold text-lg text-foreground">
                       {highestBid.amount}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {highestBid.amountUsd}
                     </p>
                   </>
                 ) : (
@@ -198,34 +168,21 @@ const IpAssetNode: React.FC<NodeProps<IpAssetNodeType>> = ({
                 onClick={() => setIsBuyDialogOpen(true)}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
-                Buy Now for {fixedPrice} IP
+                Buy Now for {price} IP
               </Button>
             )}
           </div>
         </CardContent>
       </Card>
-
-      <AlertDialog open={isBuyDialogOpen} onOpenChange={setIsBuyDialogOpen}>
-        <AlertDialogContent className="bg-sidebar">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Purchase</AlertDialogTitle>
-            <AlertDialogDescription>
-              You are about to purchase {nftData.metadata?.name || "N/A"} for{" "}
-              {fixedPrice} IP. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <Button
-              variant="secondary"
-              onClick={() => setIsBuyDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="primary">Confirm Purchase</Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
+      <DialogBuy
+        isOpen={isBuyDialogOpen}
+        onOpenChange={setIsBuyDialogOpen}
+        nftName={nftData.metadata?.name || "N/A"}
+        fixedPrice={price || ""}
+        nftContract={nftData.metadata?.tokenContract || ""}
+        tokenId={nftData.metadata?.tokenId || 0}
+        ipId={nftData.asset_id || ""}
+      />
       <Handle
         type="source"
         position={Position.Bottom}

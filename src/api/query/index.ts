@@ -1,12 +1,15 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  fetchActivity,
   fetchAllNFTs,
   fetchCreatorOfNFT,
   fetchDetailNFT,
+  fetchInsertActivity,
   fetchSearchIpAsset,
   fetchTrackById,
+  fetchUpdateViews,
 } from "@/api/endpoints";
-import type { IpAsset, NFT, Track } from "@/types";
+import type { Activity, IpAsset, NFT, Track } from "@/types";
 import { queryKeys } from "../constant/query-keys";
 
 export const useSearchIpAsset = () =>
@@ -54,4 +57,25 @@ export const useGetCreatorNFT = (address: string, enabled = !!address) =>
     queryKey: queryKeys.getCreatorNFT(address),
     queryFn: () => fetchCreatorOfNFT(address).then((res) => res.data),
     enabled,
+  });
+
+export const useUpdateViews = (ipId: string) =>
+  useMutation<void, Error, string>({
+    mutationFn: () => fetchUpdateViews(ipId),
+  });
+
+export const useInsertActivity = () =>
+  useMutation<
+    void,
+    Error,
+    { nftContract: string; tokenId: string | number; data: Activity }
+  >({
+    mutationFn: ({ nftContract, tokenId, data }) =>
+      fetchInsertActivity(nftContract, tokenId, data),
+  });
+
+export const useGetActivity = (nftContract: string, tokenId: string | number) =>
+  useQuery<Activity[], Error>({
+    queryKey: queryKeys.getActivity(nftContract, tokenId),
+    queryFn: () => fetchActivity(nftContract, tokenId).then((res) => res.data),
   });

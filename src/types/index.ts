@@ -33,7 +33,8 @@ export interface IpAssetNodeData {
   [key: string]: unknown;
 }
 
-export type BidStatus = "active" | "accepted" | "rejected" | "outbid";
+export type BidStatus = "active" | "accepted" | "cancelled" | "expired";
+
 export type ActivityType =
   | "listing"
   | "bid_placed"
@@ -46,9 +47,9 @@ export interface Bid {
   id: string;
   bidder: string;
   amount: string;
-  amountUsd: string;
   timestamp: string;
   avatar: string;
+  expires_at: string;
   status: BidStatus;
 }
 
@@ -56,7 +57,6 @@ export interface Activity {
   id: string;
   type: ActivityType;
   user: string;
-  avatar: string;
   timestamp: string;
   details: string;
   price?: string;

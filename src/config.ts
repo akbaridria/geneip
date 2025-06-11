@@ -12,6 +12,7 @@ const IP_ASSET_REGISTRY_ADDRESS = "0x77319B4031e6eF1250907aa00018B8B1c67a244b";
 const GENEIP_MARKETPLACE_ADDRESS = "0xFCC81B53fbba7f5AD36c7Dd3D5dAbB7A2E13adA4";
 
 const supportedChainIds: number[] = [storyAeneid.id];
+const STATUS_OFFERS = ["active","accepted", "cancelled", "expired"];
 
 const wagmiConfig = getDefaultConfig({
   clientId: tomoClientId,
@@ -31,4 +32,5 @@ export {
   baseAeneidApiKey,
   IP_ASSET_REGISTRY_ADDRESS,
   GENEIP_MARKETPLACE_ADDRESS,
+  STATUS_OFFERS,
 };
