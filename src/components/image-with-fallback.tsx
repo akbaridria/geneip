@@ -120,7 +120,7 @@ export function ImageWithFallback({
     >
       {/* Loading spinner overlay */}
       {isLoading && showLoadingSpinner && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
           <Loader2 className="h-6 w-6 animate-spin text-sidebar-foreground/50" />
         </div>
       )}

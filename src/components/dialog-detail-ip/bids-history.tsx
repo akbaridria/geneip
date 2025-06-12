@@ -1,5 +1,4 @@
-import { TrendingUp, Check } from "lucide-react";
-import { Button } from "../ui/button";
+import { TrendingUp } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Badge } from "../ui/badge";
 import useDetailAsset from "./use-detail-asset";
@@ -12,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 const BidsHistory = () => {
   const { selectedDetailAssetId } = useIpGraphStore();
-  const { activeBids, listBids, isOwner } = useDetailAsset(selectedDetailAssetId || "");
+  const { activeBids, listBids } = useDetailAsset(selectedDetailAssetId || "");
 
   if (!activeBids) {
     return (
@@ -43,7 +42,7 @@ const BidsHistory = () => {
       ) : (
         <ScrollArea className="h-[400px] pr-4">
           <div className="space-y-3">
-            {listBids.map((bid, index) => (
+            {listBids.map((bid) => (
               <div
                 key={bid.id}
                 className={`p-4 rounded-lg border transition-colors ${
@@ -62,29 +61,60 @@ const BidsHistory = () => {
                         <p className="font-medium text-foreground">
                           {truncateAddress(bid.bidder)}
                         </p>
-                        {index === 0 && bid.status === "active" && (
-                          <Badge {...getStatusBadgeProps("active")} className={cn("text-xs", getStatusBadgeProps("active").className)}>
-                            Highest
-                          </Badge>
-                        )}
+                        {bid.status === "active" &&
+                          Number(bid.amount) ===
+                            Math.max(
+                              ...listBids
+                                .filter((b) => b.status === "active")
+                                .map((b) => Number(b.amount))
+                            ) && (
+                            <Badge
+                              {...getStatusBadgeProps("active")}
+                              className={cn(
+                                "text-xs",
+                                getStatusBadgeProps("active").className
+                              )}
+                            >
+                              Highest
+                            </Badge>
+                          )}
                         {bid.status === "accepted" && (
-                          <Badge {...getStatusBadgeProps("accepted")} className={cn("text-xs", getStatusBadgeProps("accepted").className)}>
+                          <Badge
+                            {...getStatusBadgeProps("accepted")}
+                            className={cn(
+                              "text-xs",
+                              getStatusBadgeProps("accepted").className
+                            )}
+                          >
                             Accepted
                           </Badge>
                         )}
                         {bid.status === "cancelled" && (
-                          <Badge {...getStatusBadgeProps("cancelled")} className={cn("text-xs", getStatusBadgeProps("cancelled").className)}>
+                          <Badge
+                            {...getStatusBadgeProps("cancelled")}
+                            className={cn(
+                              "text-xs",
+                              getStatusBadgeProps("cancelled").className
+                            )}
+                          >
                             Cancelled
                           </Badge>
                         )}
                         {bid.status === "expired" && (
-                          <Badge {...getStatusBadgeProps("expired")} className={cn("text-xs", getStatusBadgeProps("expired").className)}>
+                          <Badge
+                            {...getStatusBadgeProps("expired")}
+                            className={cn(
+                              "text-xs",
+                              getStatusBadgeProps("expired").className
+                            )}
+                          >
                             Expired
                           </Badge>
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Expires: {formatDistanceToNow(
+                        Expires:{" "}
+                        {formatDistanceToNow(
                           new Date(Number(bid.timestamp) * 1000),
                           { addSuffix: true }
                         )}
@@ -97,20 +127,6 @@ const BidsHistory = () => {
                     </p>
                   </div>
                 </div>
-
-                {/* Owner Actions - Only show accept button */}
-                {isOwner && bid.status === "active" && (
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-border/50">
-                    <Button
-                      size="sm"
-                      //   onClick={() => handleAcceptBid(bid.id)}
-                      className="flex-1 bg-green-600 hover:bg-green-700"
-                    >
-                      <Check className="w-4 h-4 mr-1" />
-                      Accept Bid
-                    </Button>
-                  </div>
-                )}
               </div>
             ))}
           </div>
