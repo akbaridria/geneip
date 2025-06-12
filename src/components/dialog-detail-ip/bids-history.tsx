@@ -7,6 +7,8 @@ import { useIpGraphStore } from "@/store";
 import { truncateAddress } from "@/lib/utils";
 import Avatar from "boring-avatars";
 import { formatDistanceToNow } from "date-fns";
+import { getStatusBadgeProps } from "@/utils/badgeStatus";
+import { cn } from "@/lib/utils";
 
 const BidsHistory = () => {
   const { selectedDetailAssetId } = useIpGraphStore();
@@ -61,22 +63,22 @@ const BidsHistory = () => {
                           {truncateAddress(bid.bidder)}
                         </p>
                         {index === 0 && bid.status === "active" && (
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge {...getStatusBadgeProps("active")} className={cn("text-xs", getStatusBadgeProps("active").className)}>
                             Highest
                           </Badge>
                         )}
                         {bid.status === "accepted" && (
-                          <Badge className="text-xs bg-green-500">
+                          <Badge {...getStatusBadgeProps("accepted")} className={cn("text-xs", getStatusBadgeProps("accepted").className)}>
                             Accepted
                           </Badge>
                         )}
                         {bid.status === "cancelled" && (
-                          <Badge variant="destructive" className="text-xs">
+                          <Badge {...getStatusBadgeProps("cancelled")} className={cn("text-xs", getStatusBadgeProps("cancelled").className)}>
                             Cancelled
                           </Badge>
                         )}
                         {bid.status === "expired" && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge {...getStatusBadgeProps("expired")} className={cn("text-xs", getStatusBadgeProps("expired").className)}>
                             Expired
                           </Badge>
                         )}

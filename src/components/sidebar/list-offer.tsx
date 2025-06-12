@@ -43,6 +43,8 @@ import { Badge } from "../ui/badge";
 import { useQueryClient } from "@tanstack/react-query";
 import { useInsertActivity } from "@/api/query";
 import { erc721Abi } from "viem";
+import { getStatusBadgeProps } from "@/utils/badgeStatus";
+import { cn } from "@/lib/utils";
 
 const OfferSkeleton = () => (
   <SidebarMenuItem>
@@ -269,14 +271,10 @@ const OfferDetailModal = ({
                 <span className="text-sm font-medium">Status</span>
               </div>
               <Badge
-                variant={
-                  !["active", "accepted"].includes(offer.status) || isExpired
-                    ? "destructive"
-                    : "default"
-                }
-                className="text-xs"
+                {...getStatusBadgeProps(isExpired ? "expired" : offer.status)}
+                className={cn("text-xs", getStatusBadgeProps(isExpired ? "expired" : offer.status).className)}
               >
-                {offer.status}
+                {isExpired ? "Expired" : offer.status}
               </Badge>
             </div>
 
@@ -401,12 +399,8 @@ const OfferItem = ({
             </div>
           </div>
           <Badge
-            variant={
-              !["active", "accepted"].includes(offer.status) || isExpired
-                ? "destructive"
-                : "default"
-            }
-            className="text-xs"
+            {...getStatusBadgeProps(isExpired ? "expired" : offer.status)}
+            className={cn("text-xs", getStatusBadgeProps(isExpired ? "expired" : offer.status).className)}
           >
             {isExpired ? "Expired" : offer.status}
           </Badge>

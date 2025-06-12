@@ -45,6 +45,8 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { useQueryClient } from "@tanstack/react-query";
+import { getStatusBadgeProps } from "@/utils/badgeStatus";
+import { cn } from "@/lib/utils";
 
 const BidSkeleton = () => (
   <SidebarMenuItem>
@@ -206,10 +208,10 @@ const BidDetailModal = ({
                 <span className="text-sm font-medium">Status</span>
               </div>
               <Badge
-                variant={bid.status === "active" ? "default" : "destructive"}
-                className="text-xs"
+                {...getStatusBadgeProps(isExpired ? "expired" : bid.status)}
+                className={cn("text-xs", getStatusBadgeProps(isExpired ? "expired" : bid.status).className)}
               >
-                {bid.status}
+                {isExpired ? "Expired" : bid.status}
               </Badge>
             </div>
 
@@ -323,10 +325,8 @@ const BidItem = ({
             </div>
           </div>
           <Badge
-            variant={
-              bid.status !== "active" || isExpired ? "destructive" : "default"
-            }
-            className="text-xs"
+            {...getStatusBadgeProps(isExpired ? "expired" : bid.status)}
+            className={cn("text-xs", getStatusBadgeProps(isExpired ? "expired" : bid.status).className)}
           >
             {isExpired ? "Expired" : bid.status}
           </Badge>
