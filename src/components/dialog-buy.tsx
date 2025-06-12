@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/api/constant/query-keys";
 import { useInsertActivity } from "@/api/query";
+import { useEffect } from "react";
 
 interface DialogBuyProps {
   isOpen: boolean;
@@ -37,7 +38,6 @@ const DialogBuy: React.FC<DialogBuyProps> = ({
   nftName,
   nftContract,
   tokenId,
-  ipId,
   onOpenChange,
 }) => {
   const queryClient = useQueryClient();
@@ -49,10 +49,10 @@ const DialogBuy: React.FC<DialogBuyProps> = ({
     data: hash,
     isPending,
     error,
+    reset: resetWriteContract,
   } = useWriteContract({
     mutation: {
       onSuccess: () => {
-        onOpenChange(false);
         insertActivity(
           {
             nftContract: nftContract?.toLowerCase() || "",
@@ -77,21 +77,6 @@ const DialogBuy: React.FC<DialogBuyProps> = ({
             },
           }
         );
-        toast.success("Purchase successful");
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.ipAssetById(ipId),
-        });
-        setTimeout(() => {
-          queryClient.invalidateQueries({
-            queryKey: queryKeys.getAllNftsByAddress(nftContract),
-          });
-          queryClient.invalidateQueries({
-            queryKey: queryKeys.getDetailNFT(nftContract, tokenId),
-          });
-          queryClient.invalidateQueries({
-            queryKey: queryKeys.getCreatorNFT(nftContract),
-          });
-        }, 1000);
       },
       onError: (error) => {
         toast.error(error.message || "Purchase failed");
@@ -100,6 +85,15 @@ const DialogBuy: React.FC<DialogBuyProps> = ({
   });
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    if (isConfirmed) {
+      onOpenChange(false);
+      toast.success("Purchase successful");
+      resetWriteContract();
+      queryClient.invalidateQueries();
+    }
+  }, [isConfirmed, resetWriteContract, queryClient, onOpenChange]);
 
   const handleBuy = () => {
     writeContract({
@@ -139,19 +133,6 @@ const DialogBuy: React.FC<DialogBuyProps> = ({
         </AlertDialogFooter>
         {error && (
           <div className="text-red-500 text-sm mt-2">{error.message}</div>
-        )}
-        {hash && (
-          <div className="text-xs mt-2">
-            Tx Hash:{" "}
-            <a
-              href={`https://aeneid.storyscan.io/tx/${hash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              {hash}
-            </a>
-          </div>
         )}
       </AlertDialogContent>
     </AlertDialog>

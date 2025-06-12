@@ -80,7 +80,8 @@ const ImageSection = () => {
                 <span className="font-bold text-lg">{price} IP</span>
               </div>
               <Button
-                className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
+                variant="primary"
+                className="w-full"
                 onClick={() => setIsBuyDialogOpen(true)}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />

@@ -18,6 +18,7 @@ const useDetailAsset = (ipId: string) => {
   const [price, setPrice] = useState("");
   const [activeBids, setActiveBids] = useState<Bid[]>([]);
   const [highestBid, setHighestBid] = useState<Bid | null>(null);
+  const [listBids, setListBids] = useState<Bid[]>([]);
   const { data: nftData } = useGetIpAssetById(ipId);
   const { address } = useAccount();
   const { data: ownerData } = useReadContract({
@@ -68,23 +69,26 @@ const useDetailAsset = (ipId: string) => {
 
   useEffect(() => {
     if (offersData) {
-      const listActiveBids = offersData
-        .filter((bid) => bid.expireAt > BigInt(Math.floor(Date.now() / 1000)))
-        .map((bid) => ({
-          id: bid.id.toString(),
-          bidder: bid.offerer,
-          amount: formatEther(bid.offerPrice, "wei"),
-          timestamp: bid.expireAt.toString(),
-          avatar: bid.offerer,
-          expires_at: bid.expireAt.toString(),
-          status: STATUS_OFFERS?.[Number(bid.status)] as BidStatus,
-        }));
+      const listBids = offersData.map((bid) => ({
+        id: bid.id.toString(),
+        bidder: bid.offerer,
+        amount: formatEther(bid.offerPrice, "wei"),
+        timestamp: bid.expireAt.toString(),
+        avatar: bid.offerer,
+        expires_at: bid.expireAt.toString(),
+        status: STATUS_OFFERS?.[Number(bid.status)] as BidStatus,
+      })).sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
+      const now = Math.floor(Date.now() / 1000);
+      const listActiveBids = listBids.filter(
+        (bid) => bid.status === "active" && Number(bid.timestamp) > now
+      );
       setActiveBids(listActiveBids);
       setHighestBid(
         listActiveBids.reduce((max, bid) => {
           return Number(bid.amount) > Number(max.amount) ? bid : max;
         }, listActiveBids[0])
       );
+      setListBids(listBids);
     }
   }, [offersData]);
 
@@ -109,6 +113,7 @@ const useDetailAsset = (ipId: string) => {
     highestBid,
     creator: creatorData?.creator_address_hash,
     detail: detailData,
+    listBids,
   };
 };
 

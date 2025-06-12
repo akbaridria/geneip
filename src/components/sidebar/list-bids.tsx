@@ -8,6 +8,7 @@ import {
   DollarSign,
   User,
   Hash,
+  Check,
 } from "lucide-react";
 import {
   SidebarGroup,
@@ -44,7 +45,6 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/api/constant/query-keys";
 
 const BidSkeleton = () => (
   <SidebarMenuItem>
@@ -77,13 +77,11 @@ const BidDetailModal = ({
   isOpen,
   onClose,
   nftData,
-  refetchBids,
 }: {
   bid: DisplayBid | null;
   isOpen: boolean;
   onClose: () => void;
   nftData: NFT | undefined;
-  refetchBids: () => void;
 }) => {
   const {
     writeContract,
@@ -102,43 +100,22 @@ const BidDetailModal = ({
   useEffect(() => {
     if (isSuccess && bid) {
       // Insert activity for bid cancellation
-      insertActivity(
-        {
-          nftContract: bid.contract?.toLowerCase() || "",
-          tokenId: bid.tokenId,
-          data: {
-            id: "",
-            type: "listing_canceled", // No 'bid_cancelled' in types, use 'listing_canceled'
-            user: address?.toLowerCase() || "",
-            timestamp: new Date().toISOString(),
-            details: `Cancelled bid of ${bid.amount} IP on token #${bid.tokenId}`,
-            price: bid.amount,
-          },
+      insertActivity({
+        nftContract: bid.contract?.toLowerCase() || "",
+        tokenId: bid.tokenId,
+        data: {
+          id: "",
+          type: "listing_canceled", // No 'bid_cancelled' in types, use 'listing_canceled'
+          user: address?.toLowerCase() || "",
+          timestamp: new Date().toISOString(),
+          details: `Cancelled bid of ${bid.amount} IP on token #${bid.tokenId}`,
+          price: bid.amount,
         },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: queryKeys.getActivity(
-                bid.contract?.toLowerCase() || "",
-                bid.tokenId
-              ),
-            });
-          },
-        }
-      );
-      onClose();
+      });
+      queryClient.invalidateQueries();
       setLocalError(null);
-      refetchBids();
     }
-  }, [
-    isSuccess,
-    onClose,
-    refetchBids,
-    insertActivity,
-    queryClient,
-    bid,
-    address,
-  ]);
+  }, [isSuccess, onClose, insertActivity, queryClient, bid, address]);
 
   useEffect(() => {
     if (cancelError) {
@@ -273,12 +250,17 @@ const BidDetailModal = ({
             <Button
               variant="destructive"
               onClick={handleCancel}
-              disabled={isPending || isConfirming}
+              disabled={isPending || isConfirming || isSuccess}
             >
               {isPending || isConfirming ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   {isConfirming ? "Waiting..." : "Cancelling..."}
+                </>
+              ) : isSuccess ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  Cancelled
                 </>
               ) : (
                 <>
@@ -360,11 +342,7 @@ const ListBids = () => {
   const [selectedBid, setSelectedBid] = useState<DisplayBid | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {
-    data: bidsData,
-    isLoading: bidsLoading,
-    refetch: refetchBids,
-  } = useReadContract({
+  const { data: bidsData, isLoading: bidsLoading } = useReadContract({
     address: GENEIP_MARKETPLACE_ADDRESS,
     abi: GENEIP_MARKETPLACE_ABI,
     functionName: "getOffersFrom",
@@ -387,17 +365,16 @@ const ListBids = () => {
       expires_at: bid.expireAt?.toString() ?? "",
       status:
         typeof bid.status === "number"
-          ? (["active", "accepted", "cancelled", "expired"][
-              bid.status
-            ] as import("@/types").BidStatus)
+          ? (["active", "accepted", "cancelled", "expired"][bid.status] as import("@/types").BidStatus)
           : "active",
       contract: bid.nft,
       tokenId: bid.tokenId,
     })
-  );
+  )
+  // Sort by timestamp descending (latest first)
+  .sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
 
   const handleBidClick = useCallback((bid: DisplayBid) => {
-    console.log("bid", bid);
     setSelectedBid({ ...bid });
     setIsModalOpen(true);
   }, []);
@@ -470,7 +447,6 @@ const ListBids = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         nftData={selectedNftData}
-        refetchBids={refetchBids}
       />
     </>
   );

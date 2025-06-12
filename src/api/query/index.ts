@@ -77,5 +77,6 @@ export const useInsertActivity = () =>
 export const useGetActivity = (nftContract: string, tokenId: string | number) =>
   useQuery<Activity[], Error>({
     queryKey: queryKeys.getActivity(nftContract, tokenId),
-    queryFn: () => fetchActivity(nftContract, tokenId).then((res) => res.data),
+    queryFn: () => fetchActivity(nftContract, tokenId),
+    enabled: !!nftContract && !!tokenId,
   });

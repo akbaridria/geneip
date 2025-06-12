@@ -14,15 +14,21 @@ import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
 import useDetailAsset from "./use-detail-asset";
 import { useIpGraphStore } from "@/store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { truncateAddress } from "@/lib/utils";
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useAccount,
+} from "wagmi";
 import { GENEIP_MARKETPLACE_ADDRESS } from "@/config";
 import { GENEIP_MARKETPLACE_ABI } from "@/abis";
 import { parseEther } from "viem";
 import { Card, CardContent } from "../ui/card";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
+import { useQueryClient } from "@tanstack/react-query";
+import { useInsertActivity } from "@/api/query";
 
 const DetailAsset = () => {
   const { selectedDetailAssetId } = useIpGraphStore();
@@ -163,6 +169,8 @@ const BidSection = ({
     });
   };
 
+  const { mutate: insertActivity } = useInsertActivity();
+
   const copyTxHash = async () => {
     if (localTxHash) {
       await navigator.clipboard.writeText(localTxHash);
@@ -184,12 +192,32 @@ const BidSection = ({
     }
   }, [txHash]);
 
+  const queryClient = useQueryClient();
+  const { address } = useAccount();
+
+  const handleInsertActivity = useCallback(() => {
+    insertActivity({
+      nftContract: nftContract?.toLowerCase() as `0x${string}`,
+      tokenId: tokenId as string | number,
+      data: {
+        id: "",
+        type: "bid_placed",
+        user: address as `0x${string}`,
+        timestamp: new Date().toISOString(),
+        details: `Placed a bid of ${bidAmount} IP`,
+        price: bidAmount,
+      },
+    });
+  }, [insertActivity, nftContract, tokenId, bidAmount, address]);
+
   // Show success when tx is confirmed
   useEffect(() => {
     if (isSuccess) {
+      queryClient.invalidateQueries();
       setSuccess(true);
+      handleInsertActivity();
     }
-  }, [isSuccess]);
+  }, [isSuccess, handleInsertActivity, queryClient]);
 
   // Reset state on new bid or unmount
   useEffect(() => {

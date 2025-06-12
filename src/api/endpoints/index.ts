@@ -30,7 +30,7 @@ const fetchUpdateViews = (ipId: string) =>
 const fetchActivity = (nftContract: string, tokenId: string | number) =>
   apiClient("local")
     .get(`/activity/${nftContract}/${tokenId}`)
-    .then((res) => res.data);
+    .then((res) => res.data.results);
 
 const fetchInsertActivity = (
   nftContract: string,
@@ -39,7 +39,7 @@ const fetchInsertActivity = (
 ) =>
   apiClient("local")
     .post(`/activity/${nftContract}/${tokenId}`, { ...data })
-    .then((res) => res.data);
+    .then((res) => res.data.results);
 
 export {
   fetchSearchIpAsset,
