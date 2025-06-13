@@ -1,5 +1,9 @@
 # GeneIP
 
+> **Quick Links:**  
+> 📝 [Smart Contract Repository](https://github.com/akbaridria/geneip-contract)  
+> 🔄 [dApp Backend Service](https://github.com/akbaridria/geneip-server)
+
 GeneIP is a web application for managing, tracking, and trading intellectual property (IP) assets on the blockchain. It enables users to connect their crypto wallet, visualize IP asset lineage, register new IP assets, and participate in a decentralized marketplace for IP rights.
 
 ## Features
